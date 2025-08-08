@@ -1,0 +1,168 @@
+  :root {
+      --bg: #f3f4f6;
+      --dark: #374151;
+      --accent: #0ea5a4;
+      --white: #ffffff;
+  }
+
+  body {
+      font-family: Inter, system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 28px;
+  }
+
+  .container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+  }
+
+  .board {
+      width: 520px;
+      height: 520px;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.08);
+  }
+
+  .square {
+      width: 100%;
+      height: 0;
+      padding-bottom: 100%;
+      position: relative;
+  }
+
+  .square .cell {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      user-select: none;
+  }
+
+  .light {
+      background: #f0d9b5
+  }
+
+  .dark {
+      background: #b58863
+  }
+
+  .piece {
+      font-size: 36px
+  }
+
+  .info {
+      width: 360px;
+      background: var(--white);
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06)
+  }
+
+  .turn {
+      font-weight: 600;
+      margin-bottom: 8px
+  }
+
+  .history {
+      height: 400px;
+      overflow: auto;
+      border: 1px solid #e6e7eb;
+      padding: 8px;
+      border-radius: 6px;
+      background: #fff
+  }
+
+  .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px
+  }
+
+  .msg {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #fff7ed;
+      border: 1px solid #ffe4c7
+  }
+
+  .controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px
+  }
+
+  button {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      background: var(--white);
+      cursor: pointer
+  }
+
+  .selected {
+      outline: 3px solid rgba(14, 165, 164, 0.25);
+  }
+
+  .highlight {
+      box-shadow: inset 0 0 0 4px rgba(250, 204, 21, 0.15)
+  }
+
+  .capture-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(2, 6, 23, 0.6)
+  }
+
+  .legal-move {
+      box-shadow: inset 0 0 0 8px rgba(99, 102, 241, 0.14)
+  }
+
+  .castle-indicator {
+      font-size: 12px;
+      opacity: 0.9
+  }
+
+  .promo-modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.35)
+  }
+
+  .promo-card {
+      background: var(--white);
+      padding: 14px;
+      border-radius: 8px;
+      display: flex;
+      gap: 10px
+  }
+
+  .promo-card button {
+      font-size: 20px
+  }
+
+  .title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px
+  }
+
+  .note {
+      font-size: 13px;
+      color: #555
+  }

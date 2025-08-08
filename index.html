@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jogo de Xadrez — Local</title>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div>
+      <div class="board" id="board"></div>
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <button id="btnRestart">Reiniciar</button>
+        <button id="btnFlip">Virar tabuleiro</button>
+        <button id="btnUndo" disabled>Desfazer (não implementado)</button>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="title">Xadrez — Local</div>
+      <div class="turn" id="turnText">Vez: White</div>
+      <div class="note">Regras implementadas: movimentos legais, xeque, xeque-mate, roque (O-O e O-O-O), promoção, en passant, validação de jogadas que deixam o rei em xeque, captura de peças, empate por stalemate.</div>
+      <hr style="margin:10px 0">
+      <div class="row" style="margin-bottom:6px"><strong>Histórico</strong><div id="moveCount">0</div></div>
+      <div class="history" id="history"></div>
+      <div class="msg" id="gameMsg" style="display:none"></div>
+    </div>
+  </div>
+
+  <div id="promo" class="promo-modal" style="display:none">
+    <div class="promo-card">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="margin-bottom:8px">Promoção — escolha uma peça</div>
+        <div style="display:flex;gap:8px">
+          <button data-piece="q">♕</button>
+          <button data-piece="r">♖</button>
+          <button data-piece="b">♗</button>
+          <button data-piece="n">♘</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
