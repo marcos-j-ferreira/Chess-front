@@ -40,3 +40,15 @@ function isCheckmate() {
 
     return true;
 }
+
+
+
+
+
+
+
+function onSquareClick(x, y) {
+    if (gameOver) return;
+    if ((whiteToMove && myColor !== 'white') || (!whiteToMove && myColor !== 'black')) return;
+    // ... resto da lógica
+}
