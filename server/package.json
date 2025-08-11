@@ -1,8 +1,8 @@
-
 {
   "name": "websocket-chess-server",
   "version": "1.0.0",
   "dependencies": {
-    "ws": "^8.0.0"
+    "ws": "^8.0.0",
+    "uuid": "^9.0.0"
   }
 }

@@ -28,9 +28,23 @@ socket.onmessage = (event) => {
         initBoard(); // só inicia o tabuleiro quando ambos conectarem
     }
 
-    if (data.type === 'move') {
+        if (data.type === 'move') {
         // Movimento vindo do adversário
-        applyMove(data.move, true);
+        applyMove(data.move, true); // Primeiro, move o peão
+
+        // AGORA, VERIFICA SE HOUVE PROMOÇÃO
+        if (data.promotion) {
+            const move = data.move;
+            const promChoice = data.promotion; // ex: 'q'
+            const pieceColor = board[move.to.y][move.to.x].color;
+
+            // Atualiza a peça no tabuleiro do oponente
+            board[move.to.y][move.to.x].type = getPromotionPieceType(promChoice, pieceColor);
+            history[history.length - 1].notation += '=' + board[move.to.y][move.to.x].type.toUpperCase();
+        }
+
+        // Finaliza o turno (isso já deve estar chamando updateUI)
+        finishMove();
     }
 };
 
@@ -58,6 +72,14 @@ socket.onmessage = (event) => {
 //         if (piece && piece.color === (whiteToMove ? 'w' : 'b')) selectSquare(x, y);
 //     }
 // }
+
+function getPromotionPieceType(choice, color) {
+    if (color === 'w') {
+        return choice.toUpperCase(); // 'q' -> 'Q'
+    } else {
+        return choice.toLowerCase(); // 'q' -> 'q'
+    }
+}
 
 function onSquareClick(x, y) {
     if (gameOver) return;
@@ -165,27 +187,27 @@ function updateUI() {
     document.getElementById('moveCount').textContent = history.length;
 }
 
-// Click handling
-function onSquareClick(x, y) {
-    if (gameOver) return;
-    const piece = board[y][x];
-    if (selected) {
-        // If clicking piece of same color -> change selection
-        if (piece && piece.color === (whiteToMove ? 'w' : 'b')) {
-            selectSquare(x, y); return;
-        }
-        // else check if clicked in legalMoves
-        const mv = legalMoves.find(m => m.to.x === x && m.to.y === y);
-        if (mv) {
-            doMove(mv);
-            return;
-        }
-        // otherwise clear
-        selected = null; legalMoves = []; render();
-    } else {
-        if (piece && piece.color === (whiteToMove ? 'w' : 'b')) selectSquare(x, y);
-    }
-}
+// // Click handling
+// function onSquareClick(x, y) {
+//     if (gameOver) return;
+//     const piece = board[y][x];
+//     if (selected) {
+//         // If clicking piece of same color -> change selection
+//         if (piece && piece.color === (whiteToMove ? 'w' : 'b')) {
+//             selectSquare(x, y); return;
+//         }
+//         // else check if clicked in legalMoves
+//         const mv = legalMoves.find(m => m.to.x === x && m.to.y === y);
+//         if (mv) {
+//             doMove(mv);
+//             return;
+//         }
+//         // otherwise clear
+//         selected = null; legalMoves = []; render();
+//     } else {
+//         if (piece && piece.color === (whiteToMove ? 'w' : 'b')) selectSquare(x, y);
+//     }
+// }
 
 function selectSquare(x, y) {
     selected = { x, y };
@@ -364,9 +386,9 @@ function applyMove(m, record = true) {
     }
     if (record) {
         history.push({ from: { x: fx, y: fy }, to: { x: tx, y: ty }, notation: moveToNotation(m) });
-        whiteToMove = !whiteToMove;
-        updateGameStatus();
-        updateUI();
+       // whiteToMove = !whiteToMove;
+        //updateGameStatus();
+        //updateUI();
     }
     return {};
 }
@@ -388,30 +410,96 @@ function applyMove(m, record = true) {
 
 async function doMoveOnline(m) {
     const maybe = applyMove(m, true);
+    let promotionChoice = null; // Variável para guardar a escolha
 
     if (maybe.promotion) {
-        const prom = await askPromotion(maybe.promotion.color);
-        board[maybe.promotion.y][maybe.promotion.x].type =
-            prom === 'q' ? (maybe.promotion.color === 'w' ? 'Q' : 'q') :
-            prom === 'r' ? (maybe.promotion.color === 'w' ? 'R' : 'r') :
-            prom === 'b' ? (maybe.promotion.color === 'w' ? 'B' : 'b') :
-            (maybe.promotion.color === 'w' ? 'N' : 'n');
+        // Guarda a escolha do jogador (ex: 'q', 'r', 'b', 'n')
+        promotionChoice = await askPromotion(maybe.promotion.color);
+
+        // Atualiza o SEU tabuleiro local
+        board[maybe.promotion.y][maybe.promotion.x].type = getPromotionPieceType(promotionChoice, maybe.promotion.color);
         history[history.length - 1].notation += '=' + board[maybe.promotion.y][maybe.promotion.x].type.toUpperCase();
-        whiteToMove = !whiteToMove;
-        updateGameStatus(); updateUI();
     }
 
-    // Enviar jogada para o servidor
+    // Envia a jogada E a escolha da promoção para o servidor
     if (gameId) {
         socket.send(JSON.stringify({
             type: 'move',
             gameId,
-            move: m
+            move: m,
+            promotion: promotionChoice // <-- A INFORMAÇÃO EXTRA!
         }));
     }
 
-    updateUI();
+    finishMove();
 }
+
+// async function doMoveOnline(m) {
+//     // Passo 1: Aplica o movimento no tabuleiro virtual, sem trocar o turno.
+//     // A função `applyMove` nos avisa se uma promoção é necessária.
+//     const maybe = applyMove(m, true);
+
+//     // Passo 2: Verifica se há uma promoção.
+//     if (maybe.promotion) {
+//         // Pausa o jogo (await) e espera o jogador escolher a peça.
+//         const prom = await askPromotion(maybe.promotion.color);
+
+//         // Atualiza a peça no tabuleiro com a escolha do jogador.
+//         board[maybe.promotion.y][maybe.promotion.x].type =
+//             prom === 'q' ? (maybe.promotion.color === 'w' ? 'Q' : 'q') :
+//             prom === 'r' ? (maybe.promotion.color === 'w' ? 'R' : 'r') :
+//             prom === 'b' ? (maybe.promotion.color === 'w' ? 'B' : 'b') :
+//             (maybe.promotion.color === 'w' ? 'N' : 'n');
+        
+//         // Atualiza a notação da jogada no histórico.
+//         history[history.length - 1].notation += '=' + board[maybe.promotion.y][maybe.promotion.x].type.toUpperCase();
+//     }
+
+//     // Passo 3: Envia a jogada (já completa) para o servidor.
+//     if (gameId) {
+//         socket.send(JSON.stringify({
+//             type: 'move',
+//             gameId,
+//             move: m
+//         }));
+//     }
+
+//     // Passo 4: AGORA SIM! Com a jogada totalmente concluída, finalizamos o turno.
+//     finishMove();
+// }
+
+// async function doMoveOnline(m) {
+//     const maybe = applyMove(m, true);
+
+//     if (maybe.promotion) {
+//         const prom = await askPromotion(maybe.promotion.color);
+//         board[maybe.promotion.y][maybe.promotion.x].type =
+//             prom === 'q' ? (maybe.promotion.color === 'w' ? 'Q' : 'q') :
+//             prom === 'r' ? (maybe.promotion.color === 'w' ? 'R' : 'r') :
+//             prom === 'b' ? (maybe.promotion.color === 'w' ? 'B' : 'b') :
+//             (maybe.promotion.color === 'w' ? 'N' : 'n');
+//         history[history.length - 1].notation += '=' + board[maybe.promotion.y][maybe.promotion.x].type.toUpperCase();
+//         whiteToMove = !whiteToMove;
+//         updateGameStatus(); updateUI();
+//     }
+
+//     // Enviar jogada para o servidor
+//     if (gameId) {
+//         socket.send(JSON.stringify({
+//             type: 'move',
+//             gameId,
+//             move: m
+//         }));
+//     }
+
+//     finishMove();
+
+//     //whiteToMove = !whiteToMove; // <-- ADICIONE A TROCA DE TURNO AQUI
+//    // updateGameStatus(); // <-- Atualize o status após a troca
+//    // updateUI();
+
+//     //updateUI();
+// }
 
 function askPromotion(color) {
     return new Promise((res) => {
@@ -472,5 +560,19 @@ function applyMoveNoRecord(m) { return applyMove(m, false); }
 document.getElementById('btnRestart').addEventListener('click', () => { initBoard(); document.getElementById('gameMsg').style.display = 'none'; });
 document.getElementById('btnFlip').addEventListener('click', () => { flipped = !flipped; render(); });
 
-// Game start
+
+// Adicione esta função ao seu código
+function finishMove() {
+    // 1. Troca o turno
+    whiteToMove = !whiteToMove;
+
+    // 2. Verifica o estado do jogo (xeque, xeque-mate, etc.)
+    updateGameStatus();
+
+    // 3. Atualiza a interface do usuário
+    updateUI();
+}
+
 initBoard();
+
+
