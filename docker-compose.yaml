@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  # Serviço para o Front-end
+  frontend:
+    container_name: chess_frontend
+    build: . 
+    ports:
+      - "80:80"  
+
+  # Serviço para o Back-end
+  backend:
+    container_name: chess_backend
+    build:
+      context: ./server 
+      dockerfile: Dockerfile 
+    ports:
+      - "8080:8080" 

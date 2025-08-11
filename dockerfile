@@ -1,20 +1,9 @@
+# Dockerfile para o Front-end do Jogo de Xadrez
 
-FROM node:20
+FROM nginx:1.27-alpine-slim
 
-WORKDIR /usr/src/app
+COPY ./app /usr/share/nginx/html
 
-# Copiar a pasta do front inteira
-COPY app ./app
+EXPOSE 80
 
-# Copiar somente o servidor WebSocket
-COPY server/c-server.js ./c-server.js
-
-# Instalar dependências necessárias
-RUN npm install http-server concurrently
-
-# Expor portas:
-EXPOSE 3000 8080
-
-# Usar formato shell para rodar os dois comandos
-CMD npx concurrently node c-server.js npx http-server app -p 3000
-
+# CMD ["nginx", "-g", "daemon off;"]
