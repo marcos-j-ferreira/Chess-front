@@ -10,13 +10,11 @@ wss.on('connection', (ws) => {
     ws.id = uuidv4();
     console.log(`Novo cliente conectado: ${ws.id}`);
 
-    // Se não há jogador esperando, este vai esperar
     if (!waitingPlayer) {
         waitingPlayer = ws;
         ws.send(JSON.stringify({ type: 'waiting' }));
         console.log(`Jogador ${ws.id} aguardando adversário...`);
     } 
-    // Já tem um esperando, então cria jogo
     else {
         const gameId = uuidv4();
 
@@ -25,7 +23,6 @@ wss.on('connection', (ws) => {
             black: ws
         };
 
-        // Notifica ambos
         games[gameId].white.send(JSON.stringify({
             type: 'start',
             color: 'w',
@@ -40,7 +37,7 @@ wss.on('connection', (ws) => {
 
         console.log(`Partida iniciada (${gameId}) -> White: ${waitingPlayer.id}, Black: ${ws.id}`);
 
-        waitingPlayer = null; // limpa a fila
+        waitingPlayer = null; 
     }
 
     ws.on('message', (msg) => {
@@ -50,7 +47,6 @@ wss.on('connection', (ws) => {
                 const game = games[data.gameId];
                 if (!game) return;
 
-                // Repassa o movimento ao adversário
                 if (ws === game.white) {
                     game.black.send(JSON.stringify(data));
                 } else if (ws === game.black) {
@@ -67,6 +63,5 @@ wss.on('connection', (ws) => {
         if (waitingPlayer === ws) {
             waitingPlayer = null;
         }
-        // Aqui poderia notificar o adversário da desconexão
     });
 });
