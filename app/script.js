@@ -6,7 +6,21 @@
   - Interface simples: clique para selecionar e clicar para mover
 */
 /* ======== CONEXÃO COM O SERVIDOR WEBSOCKET ======== */
-let socket = new WebSocket("ws://backend:8080");
+
+
+// Determina o protocolo (ws ou wss para https) e o host (seu domínio ou IP)
+const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+const host = window.location.host; // ex: "54.123.45.67" ou "meuxadrez.com"
+
+// Conecta a um caminho específico que o Nginx vai interceptar, por exemplo /ws/
+const socket = new WebSocket(`${protocol}${host}/ws/`);
+
+// O resto do seu código permanece igual...
+socket.onopen = () => {
+    console.log("Conectado ao servidor WebSocket!");
+};
+// etc...
+//let socket = new WebSocket("ws://backend:8080");
 let gameId = null;
 let myColor = null;
 
