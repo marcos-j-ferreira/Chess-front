@@ -6,7 +6,7 @@
   - Interface simples: clique para selecionar e clicar para mover
 */
 /* ======== CONEXÃO COM O SERVIDOR WEBSOCKET ======== */
-let socket = new WebSocket("ws://localhost:8080");
+let socket = new WebSocket("ws://backend:8080");
 let gameId = null;
 let myColor = null;
 

@@ -1,18 +1,20 @@
 version: '3.8'
 
 services:
-  # Serviço para o Front-end
   frontend:
     container_name: chess_frontend
-    build: . 
+    build:
+      context: ./app   # pasta do seu front
+      dockerfile: Dockerfile
     ports:
-      - "80:80"  
+      - "80:80"   # expõe o front na porta 80
+    depends_on:
+      - backend
 
-  # Serviço para o Back-end
   backend:
     container_name: chess_backend
     build:
-      context: ./server 
-      dockerfile: Dockerfile 
-    ports:
-      - "8080:8080" 
+      context: ./server
+      dockerfile: Dockerfile
+    expose:
+      - "8080"   # expõe só internamente para o frontend

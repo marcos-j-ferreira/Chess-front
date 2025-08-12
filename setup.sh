@@ -18,10 +18,10 @@
 
 # --- CONFIGURAÇÃO ---
 # !! IMPORTANTE !! Altere esta linha para a URL SSH ou HTTPS do seu repositório.
-GIT_REPO_URL="https://github.com/seu-usuario/seu-jogo.git"
+GIT_REPO_URL="https://github.com/marcos-j-ferreira/Chess-front.git"
 
 # Nome da pasta que o 'git clone' criará. Geralmente é o nome do repositório.
-PROJECT_DIR="seu-jogo"
+PROJECT_DIR="xadrez-online"
 
 
 # --- INÍCIO DA EXECUÇÃO ---
@@ -41,13 +41,13 @@ echo "==============================================="
 echo "--- Instalando Git, Docker e Docker Compose... ---"
 sudo apt-get install -y git docker.io docker-compose
 
-echo "--- Habilitando e iniciando o serviço do Docker para que ele sempre inicie com a máquina ---"
-sudo systemctl enable docker
-sudo systemctl start docker
+#echo "--- Habilitando e iniciando o serviço do Docker para que ele sempre inicie com a máquina ---"
+#sudo systemctl enable docker
+#sudo systemctl start docker
 
 echo "--- (Opcional) Adicionando usuário atual ao grupo 'docker' para evitar usar 'sudo' no futuro ---"
 # Nota: Você precisará sair e logar novamente para que esta permissão tenha efeito.
-# O '|| true' previne um erro caso o usuário já esteja no grupo.
+ O '|| true' previne um erro caso o usuário já esteja no grupo.
 sudo usermod -aG docker ${USER} || true
 
 echo "==============================================="
