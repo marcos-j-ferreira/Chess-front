@@ -62,30 +62,7 @@ socket.onmessage = (event) => {
     }
 };
 
-/* ======== AJUSTE NO onSquareClick PARA BLOQUEAR MOVIMENTOS ======== */
-// function onSquareClick(x, y) {
-//     if (gameOver) return;
 
-//     // Bloquear jogada se não for minha vez
-//     if ((whiteToMove && myColor !== 'w') || (!whiteToMove && myColor !== 'b')) {
-//         return;
-//     }
-
-//     const piece = board[y][x];
-//     if (selected) {
-//         if (piece && piece.color === (whiteToMove ? 'w' : 'b')) {
-//             selectSquare(x, y); return;
-//         }
-//         const mv = legalMoves.find(m => m.to.x === x && m.to.y === y);
-//         if (mv) {
-//             doMoveOnline(mv);
-//             return;
-//         }
-//         selected = null; legalMoves = []; render();
-//     } else {
-//         if (piece && piece.color === (whiteToMove ? 'w' : 'b')) selectSquare(x, y);
-//     }
-// }
 
 function getPromotionPieceType(choice, color) {
     if (color === 'w') {
@@ -200,28 +177,6 @@ function updateUI() {
     });
     document.getElementById('moveCount').textContent = history.length;
 }
-
-// // Click handling
-// function onSquareClick(x, y) {
-//     if (gameOver) return;
-//     const piece = board[y][x];
-//     if (selected) {
-//         // If clicking piece of same color -> change selection
-//         if (piece && piece.color === (whiteToMove ? 'w' : 'b')) {
-//             selectSquare(x, y); return;
-//         }
-//         // else check if clicked in legalMoves
-//         const mv = legalMoves.find(m => m.to.x === x && m.to.y === y);
-//         if (mv) {
-//             doMove(mv);
-//             return;
-//         }
-//         // otherwise clear
-//         selected = null; legalMoves = []; render();
-//     } else {
-//         if (piece && piece.color === (whiteToMove ? 'w' : 'b')) selectSquare(x, y);
-//     }
-// }
 
 function selectSquare(x, y) {
     selected = { x, y };
@@ -407,20 +362,6 @@ function applyMove(m, record = true) {
     return {};
 }
 
-// async function doMove(m) {
-//     const maybe = applyMove(m, true);
-//     if (maybe.promotion) {
-//         // show modal and wait choice
-//         const prom = await askPromotion(maybe.promotion.color);
-//         // set piece
-//         board[maybe.promotion.y][maybe.promotion.x].type = prom === 'q' ? (maybe.promotion.color === 'w' ? 'Q' : 'q') : (prom === 'r' ? (maybe.promotion.color === 'w' ? 'R' : 'r') : (prom === 'b' ? (maybe.promotion.color === 'w' ? 'B' : 'b') : (maybe.promotion.color === 'w' ? 'N' : 'n')));
-//         history[history.length - 1].notation += '=' + board[maybe.promotion.y][maybe.promotion.x].type.toUpperCase();
-//         whiteToMove = !whiteToMove;
-//         updateGameStatus(); updateUI();
-//         return;
-//     }
-//     updateUI();
-// }
 
 async function doMoveOnline(m) {
     const maybe = applyMove(m, true);
@@ -447,73 +388,6 @@ async function doMoveOnline(m) {
 
     finishMove();
 }
-
-// async function doMoveOnline(m) {
-//     // Passo 1: Aplica o movimento no tabuleiro virtual, sem trocar o turno.
-//     // A função `applyMove` nos avisa se uma promoção é necessária.
-//     const maybe = applyMove(m, true);
-
-//     // Passo 2: Verifica se há uma promoção.
-//     if (maybe.promotion) {
-//         // Pausa o jogo (await) e espera o jogador escolher a peça.
-//         const prom = await askPromotion(maybe.promotion.color);
-
-//         // Atualiza a peça no tabuleiro com a escolha do jogador.
-//         board[maybe.promotion.y][maybe.promotion.x].type =
-//             prom === 'q' ? (maybe.promotion.color === 'w' ? 'Q' : 'q') :
-//             prom === 'r' ? (maybe.promotion.color === 'w' ? 'R' : 'r') :
-//             prom === 'b' ? (maybe.promotion.color === 'w' ? 'B' : 'b') :
-//             (maybe.promotion.color === 'w' ? 'N' : 'n');
-        
-//         // Atualiza a notação da jogada no histórico.
-//         history[history.length - 1].notation += '=' + board[maybe.promotion.y][maybe.promotion.x].type.toUpperCase();
-//     }
-
-//     // Passo 3: Envia a jogada (já completa) para o servidor.
-//     if (gameId) {
-//         socket.send(JSON.stringify({
-//             type: 'move',
-//             gameId,
-//             move: m
-//         }));
-//     }
-
-//     // Passo 4: AGORA SIM! Com a jogada totalmente concluída, finalizamos o turno.
-//     finishMove();
-// }
-
-// async function doMoveOnline(m) {
-//     const maybe = applyMove(m, true);
-
-//     if (maybe.promotion) {
-//         const prom = await askPromotion(maybe.promotion.color);
-//         board[maybe.promotion.y][maybe.promotion.x].type =
-//             prom === 'q' ? (maybe.promotion.color === 'w' ? 'Q' : 'q') :
-//             prom === 'r' ? (maybe.promotion.color === 'w' ? 'R' : 'r') :
-//             prom === 'b' ? (maybe.promotion.color === 'w' ? 'B' : 'b') :
-//             (maybe.promotion.color === 'w' ? 'N' : 'n');
-//         history[history.length - 1].notation += '=' + board[maybe.promotion.y][maybe.promotion.x].type.toUpperCase();
-//         whiteToMove = !whiteToMove;
-//         updateGameStatus(); updateUI();
-//     }
-
-//     // Enviar jogada para o servidor
-//     if (gameId) {
-//         socket.send(JSON.stringify({
-//             type: 'move',
-//             gameId,
-//             move: m
-//         }));
-//     }
-
-//     finishMove();
-
-//     //whiteToMove = !whiteToMove; // <-- ADICIONE A TROCA DE TURNO AQUI
-//    // updateGameStatus(); // <-- Atualize o status após a troca
-//    // updateUI();
-
-//     //updateUI();
-// }
 
 function askPromotion(color) {
     return new Promise((res) => {
@@ -588,5 +462,4 @@ function finishMove() {
 }
 
 initBoard();
-
 

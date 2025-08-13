@@ -1,8 +1,10 @@
 {
-  "name": "websocket-chess-server",
+  "name": "chess-server-minimal-bot",
   "version": "1.0.0",
   "dependencies": {
-    "ws": "^8.0.0",
-    "uuid": "^9.0.0"
+    "ws": "^8.17.0",
+    "uuid": "^9.0.1",
+    "chess.js": "^1.0.0-beta.8",
+    "stockfish": "^16.0.0"
   }
 }
